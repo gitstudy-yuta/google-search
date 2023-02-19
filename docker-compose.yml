@@ -7,4 +7,4 @@ services:
     build: ./docker
     container_name: web
     volumes:
-     - ./google-search:/var/www/html
+     - ./src:/var/www/html
