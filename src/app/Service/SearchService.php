@@ -9,8 +9,7 @@ use Illuminate\Support\Facades\Log;
 class SearchService {
 
     private $URL = "https://customsearch.googleapis.com/customsearch/v1";
-    private $ID = "e4e24ba9e4f2e464c";
-    private $APIKEY = "AIzaSyAgAK_iT1RPt0om6bjyswUJY8pr5LgIGDc";
+    private $ENGINE_ID  = "e4e24ba9e4f2e464c";
 
     public function requestApi($searchKey, $index)
     {
@@ -22,9 +21,9 @@ class SearchService {
             }
             
             $response = Http::retry(3, 100)->get($this->URL, [
-                'key'   => $this->APIKEY,
+                'key'   => config("system.api_key"),
                 'hl'    => "ja",
-                'cx'    => $this->ID,
+                'cx'    => $this->ENGINE_ID,
                 'q'     => $searchKey,
                 'start' => (int)$start,
             ]);
