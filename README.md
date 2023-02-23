@@ -5,6 +5,11 @@ Google 検索結果 一覧表示画面の作成
 build image and create container
 - docker-compose up -d
 
+exec conteiner
+- docker-compose exec web bash
+
 install composer 
-- domposer instal
+- composer install
+
+- set api key as SEARCH_API_KEY to .env file
 
