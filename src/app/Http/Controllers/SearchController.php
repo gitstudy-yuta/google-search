@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Service\SearchService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class SearchController extends Controller
 {   
@@ -18,28 +16,21 @@ class SearchController extends Controller
 
     public function index(Request $request)
     {
-        $error        = null;
-        $responseData = null;
-
+        $result = null;
         $inputs = $this->getInputs($request);
         if($inputs["searchKey"]){
-            $result = $this->service->requestApi($inputs["searchKey"], $inputs["sort"], $inputs["index"]);
-            if(isset($result["error"])){
-                $error = $result["error"];
-            }
-            $responseData = $result;
+            $result = $this->service->requestApi($inputs["searchKey"], $inputs["index"]);
         }
-        return view("index",["error"       => $error,
-                            "responseData" => $responseData,
-                            "inputs"       => $inputs]);
+        
+        return view("index",["result"   => $result,
+                            "inputs"    => $inputs]);
     }
 
     public function getInputs($request)
     {
         return [
             "searchKey" => trim($request->searchKey),
-            "sort"      => $request->sort ?? "asc",
-            "index"     => $request->index ?? 1,
+            "index"     => $request->has("index") ? (int)$request->index : 1,
         ];
     }
 

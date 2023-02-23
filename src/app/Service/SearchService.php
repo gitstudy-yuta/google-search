@@ -12,33 +12,27 @@ class SearchService {
     private $ID = "e4e24ba9e4f2e464c";
     private $APIKEY = "AIzaSyAgAK_iT1RPt0om6bjyswUJY8pr5LgIGDc";
 
-    public function requestApi($searchKey, $sort, $index)
+    public function requestApi($searchKey, $index)
     {
-        $result = [
-            "error" => null,
-            "responseData"  => [],
-        ];
-
-        $response = Http::retry(3, 100)->get($this->URL, [
+        $result = [];
+        try{
+            $start = 1;
+            if($index !== 1){
+                $start = ($index - 1) . "1";
+            }
+            
+            $response = Http::retry(3, 100)->get($this->URL, [
                 'key'   => $this->APIKEY,
                 'hl'    => "ja",
                 'cx'    => $this->ID,
                 'q'     => $searchKey,
-                'start' => $index,
-                // 'sort'  => $sort
+                'start' => (int)$start,
             ]);
         
-        if($response->status() != 200){
-            $result["error"] = __("messages.api_error");
-            return $result;
-        }
-        $data = $this->collectData($response);
-        return $data;
-    }
+            if($response->status() != 200){
+                throw new Exception(__("messages.api_error"));
+            }
 
-    public function collectData($response)
-    {
-        try{
             $responseBody = json_decode($response->body());
             $totalResut = $responseBody->searchInformation->totalResults;
             $hasNext    = isset($responseBody->queries->nextPage);
@@ -53,7 +47,7 @@ class SearchService {
                 $datas[] = $data;
             }
             $result = [
-                "totalResut"    => $totalResut,
+                "totalResut"    => (int)$totalResut,
                 "hasNext"       => $hasNext,
                 "datas"         => $datas,
             ];
